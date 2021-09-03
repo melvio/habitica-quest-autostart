@@ -31,11 +31,11 @@ function main() {
     const party = getPartyInformation();
 
 
-    const noQuestInvite = party.data.quest.key === undefined;
+    const isQuestInvite = party.data.quest.key !== undefined;
     const isQuestActive = party.data.quest.active === true;
 
-    if (noQuestInvite && !isQuestActive) {
-        console.log("There was no active quest and no invite so so about to send a chat message");
+    if ((!isQuestInvite) && (!isQuestActive)) {
+        console.log("There was no invite and no active quest thus we're about to send a chat message.");
         scriptProperties.setProperty(IS_QUEST_INVITE_PENDING, "false");
         sendChatInGroup();
         return;
@@ -50,9 +50,8 @@ function main() {
 
 
     const now = new Date();
-    const isQuestAlreadyPending = scriptProperties.getProperty(IS_QUEST_INVITE_PENDING) === "true";
-    if (isQuestAlreadyPending) {
-        // There is an active invite that we have seen before, check the wait time.
+    const isQuestInviteAlreadyPending = scriptProperties.getProperty(IS_QUEST_INVITE_PENDING) === "true";
+    if (isQuestInviteAlreadyPending) {
         const waitTimeMs = now - Date.parse(scriptProperties.getProperty(INVITATION_TIME_STAMP));
         console.log("There is an active invite, but the quest hasn't started yet.\n"
             + "We have been waiting for " + waitTimeMs / (1000 * 60) + " minutes");
@@ -63,8 +62,8 @@ function main() {
         return;
     }
 
-    const firstTimeWeSeeInvite = (party.data.quest.key !== undefined) && (party.data.quest.active !== true);
-    if (firstTimeWeSeeInvite) {
+    const isFirstTimeWeSeeInvite = isQuestInvite && (!isQuestActive);
+    if (isFirstTimeWeSeeInvite) {
         console.log("This is the first time we see an invite, so we set the INVITATION_TIMESTAMP and IS_QUEST_INVITE_PENDING properties");
         scriptProperties.setProperty(IS_QUEST_INVITE_PENDING, "true");
         scriptProperties.setProperty(INVITATION_TIME_STAMP, now);
