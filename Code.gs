@@ -1,5 +1,5 @@
 const userId = ""; // TODO: Fill in your Habitica user ID
-const apiToken = ""; // TOOD: Fill in your Habitica API token: keep this secret!
+const apiToken = ""; // TODO: Fill in your Habitica API token: keep this secret!
 const xClientHeader = "79551d98-31e9-42b4-b7fa-9d89b0944319-habitica-quest-autostart";
 
 // Autostart the quest after these many hours:
