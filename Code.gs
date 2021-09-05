@@ -1,6 +1,5 @@
 const userId = ""; // TODO: Fill in your Habitica user ID
 const apiToken = ""; // TOOD: Fill in your Habitica API token: keep this secret!
-
 const xClientHeader = "79551d98-31e9-42b4-b7fa-9d89b0944319-habitica-quest-autostart";
 
 // Autostart the quest after these many hours:
@@ -29,13 +28,19 @@ const INVITATION_TIME_STAMP = "INVITATION_TIMESTAMP";
 function main() {
     const scriptProperties = PropertiesService.getScriptProperties();
     const party = getPartyInformation();
+    Logger.log({"party.data.quest": party.data.quest})
+        .log({
+            "party.data.memberCount": party.data.memberCount,
+            "party.data.id (groupId)": party.data.id,
+            "party.data.leader": party.data.leader
+        });
 
 
     const isQuestInvite = party.data.quest.key !== undefined;
     const isQuestActive = party.data.quest.active === true;
 
     if ((!isQuestInvite) && (!isQuestActive)) {
-        console.log("There was no invite and no active quest thus we're about to send a chat message.");
+        Logger.log("There was no invite and no active quest thus we're about to send a chat message.");
         scriptProperties.setProperty(IS_QUEST_INVITE_PENDING, "false");
         sendChatInGroup();
         return;
@@ -43,7 +48,7 @@ function main() {
 
 
     if (isQuestActive) {
-        console.log("Quest is already active so just setting IS_QUEST_INVITE_PENDING property to false");
+        Logger.log("Quest is already active so just setting IS_QUEST_INVITE_PENDING property to false");
         scriptProperties.setProperty(IS_QUEST_INVITE_PENDING, "false");
         return;
     }
@@ -53,7 +58,7 @@ function main() {
     const isQuestInviteAlreadyPending = scriptProperties.getProperty(IS_QUEST_INVITE_PENDING) === "true";
     if (isQuestInviteAlreadyPending) {
         const waitTimeMs = now - Date.parse(scriptProperties.getProperty(INVITATION_TIME_STAMP));
-        console.log("There is an active invite, but the quest hasn't started yet.\n"
+        Logger.log("There is an active invite, but the quest hasn't started yet.\n"
             + "We have been waiting for " + waitTimeMs / (1000 * 60) + " minutes");
 
         if (waitTimeMs > maxWaitTimeMilliseconds) {
@@ -64,7 +69,7 @@ function main() {
 
     const isFirstTimeWeSeeInvite = isQuestInvite && (!isQuestActive);
     if (isFirstTimeWeSeeInvite) {
-        console.log("This is the first time we see an invite, so we set the INVITATION_TIMESTAMP and IS_QUEST_INVITE_PENDING properties");
+        Logger.log("This is the first time we see an invite, so we set the INVITATION_TIMESTAMP and IS_QUEST_INVITE_PENDING properties");
         scriptProperties.setProperty(IS_QUEST_INVITE_PENDING, "true");
         scriptProperties.setProperty(INVITATION_TIME_STAMP, now);
     }
