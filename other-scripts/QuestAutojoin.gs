@@ -42,7 +42,7 @@ function shouldAcceptQuest(quest) {
         return false;
     }
 
-    if (quest.members[usedId] != undefined) {
+    if (quest.members[userId] != undefined) {
         Logger.log("You already accepted");
         return false;
     }
